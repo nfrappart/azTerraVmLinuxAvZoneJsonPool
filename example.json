@@ -1,0 +1,20 @@
+{
+    "myvm":{
+        "size":"Standard_D2s_v3",
+        "vmadminname":"root-dsi",
+        "publisher":"Canonical",
+        "offer":"0001-com-ubuntu-server-focal",
+        "sku":"20_04-lts-gen2",
+		"version":"latest",
+        "network-tier":"Web",
+        "zone":"1",
+        "osdisk-size":"64",
+        "disks":{
+            "disk1":{
+            "suffix":"TEST-0",
+            "size":"128",
+            "lun-id":"1"
+            }
+        }
+    }
+}
