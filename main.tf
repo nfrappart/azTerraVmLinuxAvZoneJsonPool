@@ -166,7 +166,7 @@ resource "azurerm_virtual_machine_extension" "azureAdAuth" {
 
 resource "azurerm_managed_disk" "dataDisk" {
   for_each             = local.vmDisksMap
-  name                 = "${local.vmNamePrefix}${title(each.key)}${title(each.value.suffix)}"
+  name                 = "${local.vmNamePrefix}${title(each.key)}"
   resource_group_name  = azurerm_resource_group.rg.name
   location             = var.location
   storage_account_type = var.vmStorageTier
