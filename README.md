@@ -11,6 +11,9 @@ This module creates multiple VM, with data disks and dependant resources
 
 ## Required resources :
 - existing Keyvault
+- existing storage account for diag
+- existing Vnet (to specify as input variable)
+- existing subnet (to specify in the vm configurations in the json)
 
 ## Required file :
 - vm.json : containing all VMs and their specs
@@ -20,7 +23,7 @@ example:
 {
     "myVm":{
         "size":"Standard_D2s_v3",
-        "vmAdminName":"root-dsi",
+        "vmAdminName":"localadm",
         "publisher":"Canonical",
         "offer":"0001-com-ubuntu-server-focal",
         "sku":"20_04-lts-gen2",
@@ -52,10 +55,10 @@ module "vm" {
   configFileName = "vm.json"
   rgName = "test"
   env = "prod"
-  keyVaultName   = "myKv"
-  keyVaultRg = "rgMyKv"
-  vmDiagSta = "mystorageaccount"
-  rgVmDiagSta = "rgStorageAccount" 
+  keyVault   = "myKv" # reference existing key vault
+  keyVaultRg = "rgMyKv" # reference keyvault resource group name
+  vmDiagSta = "mystorageaccount" # reference existing storage account
+  rgVmDiagSta = "rgStorageAccount" # reference strage account resource group name 
   vnetName = "myVnet"
   vnetRg = "rgMyNetwork"
 

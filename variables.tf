@@ -34,7 +34,7 @@ variable "vnetRg" {
 
 variable "location" {
   type    = string
-  default = "francecentral"
+  default = "westeurope"
 }
 
 #The Managed Disk Storage tier

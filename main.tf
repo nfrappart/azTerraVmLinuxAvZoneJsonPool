@@ -3,18 +3,16 @@
 ############################################################
 
 locals {
-  vmNamePrefix      = "${lower(var.env)}linux"
-  rgName             = "rg${title(var.env)}${title(var.rgName)}"
 
   #import json content
   vmData = jsondecode(file(var.configFileName))
-  #create map of vm specs
-  #vmSpecs = { for k, v in local.vmData : k => { offer = v.offer, publisher = v.publisher, sku = v.sku, size = v.size, version = v.version, vmName = k, vmAdminName = v.vmAdminName, zone = v.zone, network-tier = v.network-tier, osdisk-size = v.osdisk-size } }
+  
   #create list of vm disks
   vmDisks = flatten([for vm_key, vm in local.vmData : [for i in vm.disks : { size = i.size, lunId = i.lunId, vmName = vm_key, zone = vm.zone }]])
   
   #create map with unique identfier of vm disks
   vmDisksMap = { for k, v in local.vmDisks : "${v.vmName}Disk${title(v.lunId)}" => { lunId = v.lunId, size = v.size, vmName = v.vmName, zone = v.zone } }
+  
   #create list of unique network tiers
   vmSubnet = distinct(flatten([for i in local.vmData : i.subnet]))
 }
@@ -38,8 +36,8 @@ data "azurerm_subnet" "subnet" {
 ##########################
 
 resource "azurerm_resource_group" "rg" {
-  name     = local.rgName
-  location = var.Location
+  name     = var.rgName
+  location = var.location
   tags = {
     ProvisioningMode = "Terraform",
     ProvisioningDate = timestamp()
@@ -69,7 +67,7 @@ resource "random_password" "vmPass" {
 # save password in keyvault secret
 resource "azurerm_key_vault_secret" "vmSecret" {
   for_each     = local.vmData
-  name         = lower("${local.vmNamePrefix}${each.key}")
+  name         = lower(each.key)
   value        = random_password.vmPass[each.key].result
   key_vault_id = data.azurerm_key_vault.kv.id
   tags = {
@@ -93,13 +91,13 @@ data "azurerm_storage_account" "vmDiag" {
 # Create 1 NIC pour each VM
 resource "azurerm_network_interface" "vmNic0" {
   for_each            = local.vmData
-  name                = "${local.vmNamePrefix}${each.key}Nic0"
+  name                = "${each.key}Nic0"
   resource_group_name = azurerm_resource_group.rg.name
   location            = var.location
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = data.azurerm_subnet.tier[each.value.subnet].id #var.SubnetId
+    subnet_id                     = data.azurerm_subnet.subnet[each.value.subnet].id 
     private_ip_address_allocation = "Dynamic"
   }
 }
@@ -107,13 +105,13 @@ resource "azurerm_network_interface" "vmNic0" {
 # Create n VM
 resource "azurerm_linux_virtual_machine" "vm" {
   for_each                        = local.vmData
-  name                            = "${local.vmNamePrefix}${title(each.key)}"
-  computer_name                   = "${local.vmNamePrefix}${title(each.key)}"
+  name                            = each.key
+  computer_name                   = each.key
   resource_group_name             = azurerm_resource_group.rg.name
   location                        = var.location
   size                            = each.value.size
   admin_username                  = each.value.vmAdminName
-  admin_password                  = random_password.vmPass[each.key].result #var.VmAdminPassword
+  admin_password                  = random_password.vmPass[each.key].result 
   disable_password_authentication = "false"
 
   network_interface_ids = [
@@ -128,9 +126,9 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   os_disk {
-    name                 = "${local.vmNamePrefix}${title(each.key)}OsDisk"
+    name                 = "${each.key}OsDisk"
     caching              = "ReadWrite"
-    storage_account_type = var.vmStorageTier #"Standard_LRS"
+    storage_account_type = var.vmStorageTier 
     disk_size_gb         = each.value.osDiskSize
   }
 
@@ -166,7 +164,7 @@ resource "azurerm_virtual_machine_extension" "azureAdAuth" {
 
 resource "azurerm_managed_disk" "dataDisk" {
   for_each             = local.vmDisksMap
-  name                 = "${local.vmNamePrefix}${title(each.key)}"
+  name                 = each.key
   resource_group_name  = azurerm_resource_group.rg.name
   location             = var.location
   storage_account_type = var.vmStorageTier
