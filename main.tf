@@ -170,7 +170,7 @@ resource "azurerm_managed_disk" "dataDisk" {
   storage_account_type = var.vmStorageTier
   create_option        = var.createOption
   disk_size_gb         = each.value.size
-  zones                = [each.value.zone]
+  zone                 = each.value.zone
 
   tags = {
     ProvisioningMode = "Terraform",
