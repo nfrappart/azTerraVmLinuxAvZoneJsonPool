@@ -51,7 +51,7 @@ example:
 ```hcl
 
 module "vm" {
-  source = "github.com/nfrappart/azTerraVmLinuxAvZoneJsonPool?ref=v1.0.0"
+  source = "github.com/nfrappart/azTerraVmLinuxAvZoneJsonPool?ref=v1.0.4"
   configFileName = "vm.json"
   rgName = "test"
   keyVault   = "myKv" # reference existing key vault
