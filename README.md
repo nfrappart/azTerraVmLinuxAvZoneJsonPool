@@ -54,7 +54,6 @@ module "vm" {
   source = "github.com/nfrappart/azTerraVmLinuxAvZoneJsonPool?ref=v1.0.0"
   configFileName = "vm.json"
   rgName = "test"
-  env = "prod"
   keyVault   = "myKv" # reference existing key vault
   keyVaultRg = "rgMyKv" # reference keyvault resource group name
   vmDiagSta = "mystorageaccount" # reference existing storage account

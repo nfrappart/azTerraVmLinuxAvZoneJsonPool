@@ -1,7 +1,4 @@
-variable "env" {
-  type = string
-  default = "dev"
-}
+
 variable "vmDiagSta" {
   type = string
 }
