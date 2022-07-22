@@ -1,8 +1,8 @@
-# Linux VMs Based Application Module
+# Linux VMs Module
 This module creates multiple VM, with data disks and dependant resources
 - 1 Resource Group
 - n Linux Virtual Machines
-- VM Extensions (ansible required ssh config)
+- VM Extensions (azure ad auth)
 - 1 NIC per VM
 - n Managed Disks per VM
 - Keyvault secrets for primary sudo user Password (to be stored in Existing Core Keyvault)

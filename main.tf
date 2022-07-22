@@ -44,7 +44,7 @@ resource "azurerm_resource_group" "rg" {
   }
   lifecycle {
     ignore_changes = [
-      tags["ProvisioningDate"],
+      tags,
     ]
   }
 }
@@ -77,7 +77,7 @@ resource "azurerm_key_vault_secret" "vmSecret" {
   lifecycle {
     ignore_changes = [
       value,
-      tags["ProvisioningDate"],
+      tags,
     ]
   }
 }
@@ -148,7 +148,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   lifecycle {
     ignore_changes = [
-      tags["ProvisioningDate"],
+      tags,
     ]
   }
 }
@@ -178,7 +178,7 @@ resource "azurerm_managed_disk" "dataDisk" {
   }
   lifecycle {
     ignore_changes = [
-      tags["ProvisioningDate"],
+      tags,
     ]
   }
 }
