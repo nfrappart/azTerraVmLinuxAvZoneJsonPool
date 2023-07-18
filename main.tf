@@ -155,10 +155,10 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
 resource "azurerm_virtual_machine_extension" "azureAdAuth" {
   for_each             = local.vmData
-  name                 = "AADloginForLinux"
+  name                 = "AADSSHLoginForLinux"
   virtual_machine_id   = azurerm_linux_virtual_machine.vm[each.key].id
-  publisher            = "Microsoft.Azure.ActiveDirectory.LinuxSSH"
-  type                 = "AADLoginForLinux"
+  publisher            = "Microsoft.Azure.ActiveDirectory"
+  type                 = "AADSSHLoginForLinux"
   type_handler_version = "1.0"
 }
 
